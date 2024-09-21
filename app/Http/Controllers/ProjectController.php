@@ -19,7 +19,6 @@ class ProjectController extends Controller
             'description' => 'required|string',
             'start_date' => 'required|date_format:Y-m-d|after_or_equal:today',
             'end_date' => 'required|date_format:Y-m-d|after:start_date',
-            'status' => 'required|in:Active,Deferred,Completed',
         ]);
     
         if ($validator->fails()) {
@@ -31,7 +30,7 @@ class ProjectController extends Controller
             'description' => $request->description,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'status' => $request->status,
+            'status' => 'Active', // Default status is 'Active'
             'user_id' => Auth::id(),
         ]);
     

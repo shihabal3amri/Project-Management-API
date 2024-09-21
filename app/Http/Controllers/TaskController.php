@@ -27,7 +27,6 @@ class TaskController extends Controller
             'start_date' => 'required|date_format:Y-m-d|after_or_equal:today',
             'end_date' => 'required|date_format:Y-m-d|after:start_date',
             'priority' => 'required|in:Low,Medium,High',
-            'status' => 'required|in:Pending,In Progress,Deferred,Completed',
             'assigned_to' => 'required|exists:users,id',
         ]);
 
