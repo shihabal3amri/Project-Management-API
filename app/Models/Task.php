@@ -11,8 +11,16 @@ class Task extends Model
     use HasFactory, SoftDeletes;
 
     public $table = 'tasks';
-    protected $dates = ['start_date', 'end_date', 'created_at', 'updated_at', 'deleted_at'];
-    protected $fillable = ['title', 'description', 'priority', 'status', 'project_id', 'user_id', 'assigned_to', 'start_date', 'end_date'];
+    protected $dates = ['start_date', 'end_date', 'created_at', 'updated_at', 'deleted_at', 'recurrence_end_date', 'last_recurrence_date'];
+    protected $fillable = [
+        'title', 'description', 'start_date', 'end_date', 'is_recurring',
+        'priority', 'status', 'user_id', 'assigned_to', 'recurrence_type', 'recurrence_interval', 'recurrence_day_of_week',
+        'recurrence_day_of_month', 'recurrence_end_date', 'project_id', 'last_recurrence_date' 
+    ];
+
+    protected $casts = [
+        'recurrence_day_of_week' => 'array', // Automatically casts JSON to array
+    ];
 
     public function project() {
         return $this->belongsTo(Project::class);
