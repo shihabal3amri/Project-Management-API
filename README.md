@@ -355,7 +355,7 @@ GET /api/projects?status=Active&sort_by=title&sort_order=asc
 ### 9. Update Task Status
 
 **Endpoint**: `PATCH /api/tasks/{taskId}/status`  
-**Description**: Updates the status of a task.
+**Description**: Updates the status of a task (only assigned user can use this endpoint).
 
 **Request**:
 ```json
