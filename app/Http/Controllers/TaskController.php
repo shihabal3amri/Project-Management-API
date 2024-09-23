@@ -243,7 +243,7 @@ class TaskController extends Controller
         $task = Task::findOrFail($taskId);
         $project = $task->project;
         // Ensure only the assigned member can update the status
-        if (Auth::id() !== $project->user_id && Auth::id() !== $task->user_id) {
+        if (Auth::id() !== $task->assigned_to) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -255,6 +255,14 @@ class TaskController extends Controller
             $task->updateStatus($request->status);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);
+        }
+
+        // Notify the assigned user and task creator
+        $usersToNotify = collect([$task->user_id, $task->assigned_to])->unique();
+
+        foreach ($usersToNotify as $userId) {
+            $user = User::find($userId);
+            $user->notify(new TaskUpdatedNotification($task, 'The task has been updated.'));
         }
 
         return response()->json($task, 200);
