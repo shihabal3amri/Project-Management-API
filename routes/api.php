@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\NotificationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -24,4 +25,9 @@ Route::middleware('auth:api')->group(function () {
 
     // Team Routes
     Route::post('/projects/{projectId}/team', [TeamController::class, 'store']);
+
+    // Notification Routes
+    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
+    Route::get('/notifications', [NotificationController::class, 'getAllNotifications']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 });
