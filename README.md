@@ -8,8 +8,15 @@ This is a Project Management API built with Laravel. It allows users to register
 - **Team Management**: Manage team members assigned to projects.
 - **Recurring Task Feature**: Support for creating recurring tasks with customizable recurrence patterns (daily, weekly, monthly, yearly).
 - **Authentication**: Secured with authentication via Laravel Passport.
+- **Notifications**: Team members receive notifications upon task assignment or task updates.
 
-The recurring task feature allows tasks to be automatically created based on a user-defined schedule, with customizable recurrence types (daily, weekly, monthly, or yearly) and intervals (e.g., every 2 weeks). This ensures that recurring tasks are generated automatically without needing manual input.
+### Recurring Task Feature
+The recurring task feature allows tasks to be automatically created based on a user-defined schedule. It includes customizable recurrence types (daily, weekly, monthly, or yearly) and intervals (e.g., every 2 weeks). Recurring tasks are generated automatically based on the recurrence interval, helping ensure ongoing work is scheduled without manual input.
+
+### Notifications Feature
+Notifications are sent to relevant users (task creator and assigned member) upon task assignment or updates. This helps team members stay informed of task changes in real time. Notifications can be fetched via API, and users can mark them as read, ensuring a smooth workflow.
+
+
 
 ---
 
@@ -410,6 +417,100 @@ This will ensure that recurring tasks are generated and processed on the appropr
     "project_id": 1,
     "user_id": 3
   }
+}
+```
+
+---
+### 11. Fetch Unread Notifications
+
+**Endpoint**: `GET /api/notifications/unread`  
+**Description**: Fetches all unread notifications for the authenticated user.
+
+**Response**:
+```json
+{
+  "data": [
+    {
+      "id": "1a2b3c4d5e6f",
+      "type": "App\\Notifications\\TaskUpdatedNotification",
+      "notifiable_type": "App\\Models\\User",
+      "notifiable_id": 1,
+      "data": {
+        "message": "The task has been updated.",
+        "task": {
+          "id": 8,
+          "title": "New Task",
+          "description": "Task description"
+        }
+      },
+      "read_at": null,
+      "created_at": "2024-09-22T18:00:00.000000Z",
+      "updated_at": "2024-09-22T18:00:00.000000Z"
+    }
+  ]
+}
+```
+
+---
+
+### 12. Mark a Notification as Read
+
+**Endpoint**: `PATCH /api/notifications/{notificationId}/read`  
+**Description**: Marks a specific notification as read for the authenticated user.
+
+**Response**:
+```json
+{
+  "message": "Notification marked as read."
+}
+```
+
+---
+
+### 13. Fetch All Notifications (Read and Unread)
+
+**Endpoint**: `GET /api/notifications`  
+**Description**: Fetches all notifications (read and unread) for the authenticated user.
+
+**Response**:
+```json
+{
+  "data": [
+    {
+      "id": "1a2b3c4d5e6f",
+      "type": "App\\Notifications\\TaskUpdatedNotification",
+      "notifiable_type": "App\\Models\\User",
+      "notifiable_id": 1,
+      "data": {
+        "message": "The task has been updated.",
+        "task": {
+          "id": 8,
+          "title": "New Task",
+          "description": "Task description"
+        }
+      },
+      "read_at": null,
+      "created_at": "2024-09-22T18:00:00.000000Z",
+      "updated_at": "2024-09-22T18:00:00.000000Z"
+    },
+    {
+      "id": "2f4b6d8c9e7f",
+      "type": "App\\Notifications\\TaskUpdatedNotification",
+      "notifiable_type": "App\\Models\\User",
+      "notifiable_id": 1,
+      "data": {
+        "message": "The task has been completed.",
+        "task": {
+          "id": 9,
+          "title": "Another Task",
+          "description": "Task description"
+        }
+      },
+      "read_at": "2024-09-22T19:00:00.000000Z",
+      "created_at": "2024-09-22T17:00:00.000000Z",
+      "updated_at": "2024-09-22T19:00:00.000000Z"
+    }
+  ]
 }
 ```
 
