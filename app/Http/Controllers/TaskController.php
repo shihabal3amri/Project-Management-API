@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-
+use App\Notifications\TaskUpdatedNotification;
+use App\Models\User;
+use Log;
 class TaskController extends Controller
 {
     // 5. Create a task and assign it to a team member
@@ -83,6 +85,14 @@ class TaskController extends Controller
 
         // Create the task
         $task = Task::create($taskData);
+
+        // Notify the assigned user and task creator
+        $usersToNotify = collect([$task->user_id, $task->assigned_to])->unique();
+
+        foreach ($usersToNotify as $userId) {
+            $user = User::find($userId);
+            $user->notify(new TaskUpdatedNotification($task, 'The task has been created.'));
+        }
 
         return response()->json($task, 201);
     }
@@ -186,11 +196,11 @@ class TaskController extends Controller
         ]);
 
         // If the user didn't provide the start_date and end_date, nullify them
-        if (!$userProvidedStartDate) {
-            $taskData['start_date'] = null;
+        if ($userProvidedStartDate) {
+            $taskData['start_date'] = $userProvidedStartDate;
         }
-        if (!$userProvidedEndDate) {
-            $taskData['end_date'] = null;
+        if ($userProvidedEndDate) {
+            $taskData['end_date'] = $userProvidedEndDate;
         }
 
         if ($request->is_recurring) {
@@ -210,6 +220,14 @@ class TaskController extends Controller
 
         // Update the task
         $task->update($taskData);
+
+        // Notify the assigned user and task creator
+        $usersToNotify = collect([$task->user_id, $task->assigned_to])->unique();
+
+        foreach ($usersToNotify as $userId) {
+            $user = User::find($userId);
+            $user->notify(new TaskUpdatedNotification($task, 'The task has been updated.'));
+        }
 
         return response()->json($task, 200);
     }
